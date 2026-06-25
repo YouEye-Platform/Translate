@@ -1,0 +1,21 @@
+{
+  "translate": {
+    "title": "Translate",
+    "subtitle": "Privacy-friendly translation powered by MyMemory",
+    "placeholder": "Enter text to translate…",
+    "result": "Translation will appear here…",
+    "button": "Translate",
+    "translating": "Translating…",
+    "history": "History",
+    "saved": "Saved",
+    "settings": "Settings",
+    "swap": "Swap languages",
+    "copy": "Copy",
+    "save": "Save",
+    "unsave": "Unsave",
+    "delete": "Delete",
+    "noHistory": "No translations yet",
+    "noSaved": "No saved translations",
+    "recentTranslations": "Recent Translations"
+  }
+}

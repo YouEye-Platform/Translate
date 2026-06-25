@@ -1,0 +1,217 @@
+apiVersion: v1
+kind: app
+integration: native
+version: 0.5.0
+surfaceSchemaVersion: 1
+metadata:
+  id: "translate"
+  name: "Translate"
+  description: "Privacy-friendly translation with saved translations and language preferences. Powered by MyMemory."
+  icon: "languages"
+  category: "productivity"
+  website: "https://github.com/YouEye-Platform/Translate"
+  tags: ["translation", "language", "productivity", "native"]
+  defaultSubdomain: "translate"
+
+detail:
+  longDescription: |
+    Translate is a privacy-friendly translation tool with history and saved translations.
+    Powered by MyMemory — works out of the box with no API key. Supports language preferences,
+    translation history, and favorites.
+  screenshots:
+    - path: "assets/screenshots/1.png"
+      caption: "Translation interface"
+    - path: "assets/screenshots/2.png"
+      caption: "Translation history and favorites"
+
+capabilities:
+  widgets: true
+  settings_panel: true
+
+surfaces:
+  - id: app-settings
+    kind: settings-panel
+    placement: app-settings
+    name: App Settings
+    description: App-owned settings panel
+    embedPath: /embed/settings
+    permissions: []
+  - id: quick-translate
+    kind: widget
+    placement: dashboard
+    name: Quick Translate
+    description: Translate text directly from your dashboard
+    embedPath: /embed/widget/quick-translate
+    permissions: []
+    defaultSize:
+      width: 28
+      height: 25
+    minSize:
+      width: 22
+      height: 18
+    maxSize:
+      width: 45
+      height: 40
+  - id: recent-translations
+    kind: widget
+    placement: dashboard
+    name: Recent Translations
+    description: Your most recent translations
+    embedPath: /embed/widget/recent-translations
+    permissions: []
+    defaultSize:
+      width: 25
+      height: 25
+    minSize:
+      width: 18
+      height: 18
+    maxSize:
+      width: 45
+      height: 45
+    refreshInterval: 300
+  - id: saved-phrases
+    kind: widget
+    placement: dashboard
+    name: Saved Phrases
+    description: Your bookmarked translations
+    embedPath: /embed/widget/saved-phrases
+    permissions: []
+    defaultSize:
+      width: 22
+      height: 22
+    minSize:
+      width: 16
+      height: 16
+    maxSize:
+      width: 40
+      height: 40
+    refreshInterval: 300
+  - id: phrase-of-the-day
+    kind: widget
+    placement: dashboard
+    name: Phrase of the Day
+    description: Learn a new phrase every day
+    embedPath: /embed/widget/phrase-of-the-day
+    permissions: []
+    defaultSize:
+      width: 20
+      height: 18
+    minSize:
+      width: 16
+      height: 14
+    maxSize:
+      width: 30
+      height: 28
+    refreshInterval: 3600
+  - id: my-activity
+    kind: widget
+    placement: dashboard
+    name: My Activity
+    description: Your translation activity this week
+    embedPath: /embed/widget/my-activity
+    permissions: []
+    defaultSize:
+      width: 22
+      height: 20
+    minSize:
+      width: 16
+      height: 16
+    maxSize:
+      width: 35
+      height: 30
+    refreshInterval: 600
+  - id: translation-preview
+    kind: info-card
+    placement: timeline
+    name: Translation preview
+    description: Translation preview card
+    embedPath: /embed/card/translation-preview
+    permissions: []
+  - id: translate-text
+    kind: timeline-card
+    placement: timeline
+    name: Text translated
+    description: Text translation performed
+    embedPath: /embed/timeline/translation
+    permissions:
+      - timeline:write
+    triggers:
+      - translate-text
+
+wants:
+  - appId: libretranslate
+    name: LibreTranslate
+    description: "Self-hosted translation engine"
+    defaultPort: 5000
+internet:
+  proxy:
+    - host: api.mymemory.translated.net
+      paths:
+        - /get*
+      methods:
+        - GET
+
+database:
+  mode: shared
+  name: "ye_translate"
+  user: "ye_translate"
+
+containers:
+  - name: main
+    type: lxd
+    image: debian/12
+    port: 3000
+    primary: true
+    network: isolated
+    source:
+      repo: YouEye-Platform/Translate
+      nodeVersion: "22.x"
+      appDir: /opt/app
+    healthCheck:
+      type: http
+      path: /api/health
+      timeout: 120000
+
+secrets:
+  - name: db_password
+    file: .db_password
+    generator: password
+    length: 32
+  - name: jwt_secret
+    file: .jwt_secret
+    generator: secretKey
+    length: 64
+
+backup:
+  strategy: "stop-dump-export"
+  volumes: []
+
+sso:
+  type: oauth2
+  callback_path: /api/auth/callback
+  setup:
+    method: env
+
+env_mapping:
+  DATABASE_URL: "${database.url}"
+  JWT_SECRET: "${secrets.jwt_secret}"
+  IDENTITY_URL: "${identity.externalUrl}"
+  IDENTITY_INTERNAL_URL: "${identity.internalUrl}"
+  IDENTITY_CLIENT_ID: "${sso.client_id}"
+  IDENTITY_CLIENT_SECRET: "${sso.client_secret}"
+  APP_URL: "${app.url}"
+  TRANSLATE_EXTERNAL_URL: "${app.url}"
+  YOUEYE_GATEWAY: "${integration.gateway_url}"
+  YOUEYE_APP_TOKEN: "${integration.app_token}"
+  YOUEYE_APP_ID: "${app.id}"
+  NODE_ENV: production
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+
+uninstall:
+  dropSharedDatabase: true
+
+update:
+  strategy: replace
+  preserveData: true
+  preserveSecrets: true
