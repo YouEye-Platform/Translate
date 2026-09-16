@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { TranslateSettingsPanel } from "@/app/settings/page";
+import { TranslateSettingsPanel } from "@/app/settings/settings-panel";
 
 export default function SettingsEmbedPage() {
   return (
