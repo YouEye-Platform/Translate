@@ -5,7 +5,7 @@ initSession("ye-translate");
 
 export const middleware = createCanvasMiddleware({
   appId: "ye-translate",
-  publicRoutes: ["/api/widgets/", "/api/cards/", "/api/inter-app/", "/api/translate/languages", "/embed/timeline/", "/embed/widget/"],
+  publicRoutes: ["/api/translate/languages", "/embed/timeline/", "/embed/widget/"],
 });
 
 export const config = {

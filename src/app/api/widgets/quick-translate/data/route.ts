@@ -1,11 +1,14 @@
+import { getSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { getOne } from "@/lib/db/client";
 import { runMigrations } from "@/lib/db/migrate";
 import { getLanguageName } from "@/lib/translate/languages";
 
 export async function GET(request: Request) {
+  const session = await getSession("ye-translate");
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   await runMigrations();
-  const userId = request.headers.get("x-youeye-user");
+  const userId = session.userId;
   if (!userId) return NextResponse.json({ widget_type: "custom", title: "Quick Translate", data: {} });
 
   const prefs = await getOne<{ default_source_lang: string; default_target_lang: string }>(

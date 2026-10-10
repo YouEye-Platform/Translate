@@ -1,9 +1,12 @@
+import { getSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { getMany } from "@/lib/db/client";
 import { runMigrations } from "@/lib/db/migrate";
 import { translateLongText } from "@/lib/translate/mymemory";
 
 export async function POST(request: Request) {
+  const session = await getSession("ye-translate");
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   await runMigrations();
   const body = await request.json();
   const { request_type, data } = body;
@@ -26,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   if (request_type === "search" && data?.query) {
-    const userId = data.user_id;
+    const userId = session.userId;
     if (!userId) return NextResponse.json({ results: [] });
 
     const results = await getMany(

@@ -1,10 +1,13 @@
+import { getSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { getOne, getMany } from "@/lib/db/client";
 import { runMigrations } from "@/lib/db/migrate";
 
 export async function GET(request: Request) {
+  const session = await getSession("ye-translate");
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   await runMigrations();
-  const userId = request.headers.get("x-youeye-user");
+  const userId = session.userId;
   if (!userId) {
     return NextResponse.json({
       widget_type: "custom",
