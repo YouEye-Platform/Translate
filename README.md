@@ -4,7 +4,7 @@ Translation app for the [YouEye](https://github.com/YouEye-Platform/YouEye) plat
 
 Translate runs as a native YouEye app. It provides a focused translation interface, saved phrases, dashboard widgets, and a settings surface embedded inside YouEye Settings.
 
-Current development source version: `0.4.4.1.0.2`
+The version in `package.json` and `youeye-app.yaml` is the exact source version.
 
 ## Features
 
