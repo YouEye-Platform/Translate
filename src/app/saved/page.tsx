@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect } from "react";
 import { SavedList } from "@/components/translate/saved-list";
 
@@ -42,7 +44,7 @@ export default function SavedPage() {
           <h1 className="text-2xl font-bold">Saved Translations</h1>
           <p className="text-muted-foreground text-sm mt-1">{translations.length} saved</p>
         </div>
-        <a href="/" className="text-sm text-primary hover:underline">← Translate</a>
+        <Link href="/" className="text-sm text-primary hover:underline" prefetch={false}>← Translate</Link>
       </div>
       <SavedList translations={translations} onUnsave={handleUnsave} />
     </div>

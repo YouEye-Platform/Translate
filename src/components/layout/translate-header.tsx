@@ -1,3 +1,5 @@
+
+import Link from "next/link";
 /**
  * Translate Header — Platform-consistent header
  *
@@ -99,22 +101,22 @@ export async function TranslateHeader() {
   return (
     <>
       <header className="ye-mobile-top-header sticky top-0 z-50 grid h-14 grid-cols-[minmax(0,1fr)_minmax(0,640px)_minmax(0,1fr)] items-center gap-3 border-b border-border/40 bg-background/95 px-4 backdrop-blur-md">
-        <a
+        <Link
           href="/"
           className="flex min-w-0 items-center justify-start gap-2 font-semibold text-foreground hover:text-foreground/80 transition-colors"
           title={displayName}
-        >
+         prefetch={false}>
           {displayMode !== "text-only" && renderedIcon}
           {displayMode !== "icon-only" && (
             brandingCss
               ? <BrandedAppTitle name={displayName} css={brandingCss} fontUrl={resolvedFontUrl} charTransforms={brandingCssChars} />
               : <span>{displayName}</span>
           )}
-        </a>
+        </Link>
 
         <div className="ye-mobile-top-center flex min-w-0 items-center justify-center">
           <nav className="hidden md:flex items-center gap-1">
-            <a href="/" className="px-3 py-1.5 text-sm rounded-md hover:bg-accent/50 transition-colors">Translate</a>
+            <Link href="/" className="px-3 py-1.5 text-sm rounded-md hover:bg-accent/50 transition-colors" prefetch={false}>Translate</Link>
             <a href="/saved" className="px-3 py-1.5 text-sm rounded-md hover:bg-accent/50 transition-colors text-muted-foreground">Saved</a>
           </nav>
         </div>
@@ -137,7 +139,7 @@ export async function TranslateHeader() {
 
       <div className="ye-mobile-shell-only fixed inset-x-0 bottom-0 z-50 items-center gap-2 border-t border-border/60 bg-background/95 px-2 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] backdrop-blur-xl">
         <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
-          <a href="/" className="inline-flex h-12 min-w-12 items-center justify-center rounded-2xl px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">Translate</a>
+          <Link href="/" className="inline-flex h-12 min-w-12 items-center justify-center rounded-2xl px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" prefetch={false}>Translate</Link>
           <a href="/saved" className="inline-flex h-12 min-w-12 items-center justify-center rounded-2xl px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">Saved</a>
         </nav>
         <MobileAccountSheet

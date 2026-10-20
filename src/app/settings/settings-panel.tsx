@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LanguageSelector } from "@/components/translate/language-selector";
@@ -48,7 +50,7 @@ export function TranslateSettingsPanel({ embedded = false }: { embedded?: boolea
         {!embedded && (
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-bold">Settings</h1>
-            <a href="/" className="text-sm text-primary hover:underline">← Translate</a>
+            <Link href="/" className="text-sm text-primary hover:underline" prefetch={false}>← Translate</Link>
           </div>
         )}
 
