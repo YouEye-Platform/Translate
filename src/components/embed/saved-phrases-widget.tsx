@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations as useInterfaceTranslations } from "next-intl";
 import { Star } from "lucide-react";
 
 interface SavedPhrase {
@@ -18,12 +19,14 @@ interface SavedPhrasesWidgetProps {
 }
 
 export function SavedPhrasesWidget({ phrases, viewAllUrl }: SavedPhrasesWidgetProps) {
+  const translateInterface = useInterfaceTranslations("interface");
+
   if (phrases.length === 0) {
     return (
       <div className="h-full flex items-center justify-center p-4">
         <div className="text-center">
           <Star className="h-8 w-8 mx-auto mb-2 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No saved phrases yet</p>
+          <p className="text-sm text-muted-foreground">{translateInterface("mc637ca5796e9")}</p>
         </div>
       </div>
     );
@@ -34,12 +37,11 @@ export function SavedPhrasesWidget({ phrases, viewAllUrl }: SavedPhrasesWidgetPr
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-1.5">
           <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
-          <span className="text-xs font-semibold text-foreground">Saved Phrases</span>
+          <span className="text-xs font-semibold text-foreground">{translateInterface("mbe7563115d16")}</span>
         </div>
         {viewAllUrl && (
           <a href={viewAllUrl} target="_top" className="text-[10px] text-primary hover:underline">
-            View all
-          </a>
+            {translateInterface("m30a64216eaea")}</a>
         )}
       </div>
 

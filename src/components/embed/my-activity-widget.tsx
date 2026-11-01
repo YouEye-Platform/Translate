@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations as useInterfaceTranslations } from "next-intl";
 import { BarChart3, Languages, Type } from "lucide-react";
 
 interface DailyCount {
@@ -14,12 +15,12 @@ interface MyActivityWidgetProps {
   dailyCounts: DailyCount[];
 }
 
-function formatNumber(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return String(n);
-}
 
 export function MyActivityWidget({ translationsThisWeek, languagesUsed, charsTranslated, dailyCounts }: MyActivityWidgetProps) {
+  const locale = useLocale();
+  const formatNumber = (value: number) => new Intl.NumberFormat(locale, {notation: "compact", maximumFractionDigits: 1}).format(value);
+  const translateInterface = useInterfaceTranslations("interface");
+
   const maxCount = Math.max(...dailyCounts.map((d) => d.count), 1);
 
   return (
@@ -27,9 +28,9 @@ export function MyActivityWidget({ translationsThisWeek, languagesUsed, charsTra
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <BarChart3 className="h-3.5 w-3.5 text-violet-500" />
-          <span className="text-xs font-semibold text-foreground">My Activity</span>
+          <span className="text-xs font-semibold text-foreground">{translateInterface("m045bd45edf2a")}</span>
         </div>
-        <span className="text-[10px] text-muted-foreground">This week</span>
+        <span className="text-[10px] text-muted-foreground">{translateInterface("m8c4eef5ab253")}</span>
       </div>
 
       {/* Stat cards */}
@@ -37,17 +38,17 @@ export function MyActivityWidget({ translationsThisWeek, languagesUsed, charsTra
         <div className="rounded-lg bg-muted/50 p-2 text-center">
           <Languages className="h-3.5 w-3.5 mx-auto mb-1 text-violet-500" />
           <p className="text-lg font-bold leading-tight">{formatNumber(translationsThisWeek)}</p>
-          <p className="text-[10px] text-muted-foreground">Translations</p>
+          <p className="text-[10px] text-muted-foreground">{translateInterface("m266a41b90d4f")}</p>
         </div>
         <div className="rounded-lg bg-muted/50 p-2 text-center">
           <span className="text-sm">🌐</span>
           <p className="text-lg font-bold leading-tight">{languagesUsed}</p>
-          <p className="text-[10px] text-muted-foreground">Languages</p>
+          <p className="text-[10px] text-muted-foreground">{translateInterface("m318655cea4bd")}</p>
         </div>
         <div className="rounded-lg bg-muted/50 p-2 text-center">
           <Type className="h-3.5 w-3.5 mx-auto mb-1 text-violet-500" />
           <p className="text-lg font-bold leading-tight">{formatNumber(charsTranslated)}</p>
-          <p className="text-[10px] text-muted-foreground">Characters</p>
+          <p className="text-[10px] text-muted-foreground">{translateInterface("m6fac39e2845b")}</p>
         </div>
       </div>
 

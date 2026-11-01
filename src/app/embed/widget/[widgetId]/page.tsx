@@ -1,3 +1,4 @@
+import { getLocale, getTranslations as getInterfaceTranslations } from "next-intl/server";
 import { getSession } from "@/lib/auth";
 import { getOne, getMany } from "@/lib/db/client";
 import { runMigrations } from "@/lib/db/migrate";
@@ -13,21 +14,29 @@ interface WidgetPageProps {
   params: Promise<{ widgetId: string }>;
 }
 
-function timeAgo(dateStr: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-  if (seconds < 60) return "just now";
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
-}
 
 export default async function TranslateWidgetPage({ params }: WidgetPageProps) {
+  const translateInterface = await getInterfaceTranslations("interface");
+
+  const locale = await getLocale();
+  const languageName = (code: string) => {
+    if (code === "auto") return translateInterface("detectLanguage");
+    try { return new Intl.DisplayNames([locale], {type: "language"}).of(code) || getLanguageName(code); }
+    catch { return getLanguageName(code); }
+  };
+  const timeAgo = (dateStr: string) => {
+    const seconds = (new Date(dateStr).getTime() - Date.now()) / 1000;
+    if (!Number.isFinite(seconds)) return "";
+    const unit = Math.abs(seconds) < 60 ? "second" : Math.abs(seconds) < 3600 ? "minute" : Math.abs(seconds) < 86400 ? "hour" : "day";
+    const divisor = {second: 1, minute: 60, hour: 3600, day: 86400}[unit];
+    return new Intl.RelativeTimeFormat(locale, {numeric: "auto"}).format(Math.round(seconds / divisor), unit);
+  };
   const { widgetId } = await params;
   await runMigrations();
 
   const session = await getSession("ye-translate").catch(() => null);
   if (!session) {
-    return <EmptyState message="Sign in to use Translate widgets." />;
+    return <EmptyState message={translateInterface("mc68c9c19a284")} />;
   }
 
   const externalUrl = process.env.TRANSLATE_EXTERNAL_URL || "";
@@ -45,8 +54,8 @@ export default async function TranslateWidgetPage({ params }: WidgetPageProps) {
       <QuickTranslateWidget
         defaultSourceLang={sourceLang}
         defaultTargetLang={targetLang}
-        sourceLangName={getLanguageName(sourceLang)}
-        targetLangName={getLanguageName(targetLang)}
+        sourceLangName={languageName(sourceLang)}
+        targetLangName={languageName(targetLang)}
       />
     );
   }
@@ -59,14 +68,14 @@ export default async function TranslateWidgetPage({ params }: WidgetPageProps) {
       [session.userId]
     );
     if (translations.length === 0) {
-      return <EmptyState message="No translations yet. Try translating something!" />;
+      return <EmptyState message={translateInterface("m7ba6977e62fb")} />;
     }
 
     const items = translations.map((t) => ({
       source_text: String(t.source_text).slice(0, 40),
       translated_text: String(t.translated_text).slice(0, 40),
-      source_lang_name: getLanguageName(String(t.source_lang)),
-      target_lang_name: getLanguageName(String(t.target_lang)),
+      source_lang_name: languageName(String(t.source_lang)),
+      target_lang_name: languageName(String(t.target_lang)),
       time_ago: timeAgo(String(t.created_at)),
     }));
 
@@ -88,8 +97,8 @@ export default async function TranslateWidgetPage({ params }: WidgetPageProps) {
       translated_text: String(t.translated_text).slice(0, 60),
       source_lang: String(t.source_lang),
       target_lang: String(t.target_lang),
-      source_lang_name: getLanguageName(String(t.source_lang)),
-      target_lang_name: getLanguageName(String(t.target_lang)),
+      source_lang_name: languageName(String(t.source_lang)),
+      target_lang_name: languageName(String(t.target_lang)),
     }));
 
     return <SavedPhrasesWidget phrases={phrases} viewAllUrl={`${externalUrl}/saved`} />;
@@ -102,8 +111,8 @@ export default async function TranslateWidgetPage({ params }: WidgetPageProps) {
       <PhraseOfDayWidget
         text={phrase.text}
         translation={phrase.translation}
-        langName={getLanguageName(phrase.lang)}
-        targetLangName={getLanguageName(phrase.targetLang)}
+        langName={languageName(phrase.lang)}
+        targetLangName={languageName(phrase.targetLang)}
         categories={phrase.categories}
       />
     );
@@ -142,7 +151,7 @@ export default async function TranslateWidgetPage({ params }: WidgetPageProps) {
     );
   }
 
-  return <EmptyState message="Unknown widget." />;
+  return <EmptyState message={translateInterface("mec29e7f61294")} />;
 }
 
 function EmptyState({ message }: { message: string }) {

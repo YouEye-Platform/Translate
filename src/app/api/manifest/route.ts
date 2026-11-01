@@ -1,11 +1,15 @@
+import { installedRelease } from "@/lib/installed-release";
 import { NextResponse } from "next/server";
 import packageJson from "../../../../package.json";
 
 export async function GET() {
+  const release = await installedRelease("translate", packageJson.version);
   return NextResponse.json({
     id: "ye-translate",
     name: "Translate",
-    version: packageJson.version,
+    version: release?.version ?? "unknown",
+    buildVersion: packageJson.version,
+    release,
     description: "Privacy-friendly translation with saved translations",
     icon: "Languages",
     permissions: ["timeline:write", "widgets:register"],

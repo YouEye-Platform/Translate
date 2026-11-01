@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations as useInterfaceTranslations } from "next-intl";
 import { Clock } from "lucide-react";
 
 interface RecentItem {
@@ -16,10 +17,12 @@ interface RecentTranslationsWidgetProps {
 }
 
 export function RecentTranslationsWidget({ items, viewAllUrl }: RecentTranslationsWidgetProps) {
+  const translateInterface = useInterfaceTranslations("interface");
+
   if (items.length === 0) {
     return (
       <div className="h-full flex items-center justify-center p-4">
-        <p className="text-sm text-muted-foreground">No translations yet. Try translating something!</p>
+        <p className="text-sm text-muted-foreground">{translateInterface("m7ba6977e62fb")}</p>
       </div>
     );
   }
@@ -29,12 +32,11 @@ export function RecentTranslationsWidget({ items, viewAllUrl }: RecentTranslatio
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-1.5">
           <Clock className="h-3.5 w-3.5 text-violet-500" />
-          <span className="text-xs font-semibold text-foreground">Recent Translations</span>
+          <span className="text-xs font-semibold text-foreground">{translateInterface("m9fd89cd6fa92")}</span>
         </div>
         {viewAllUrl && (
           <a href={viewAllUrl} target="_top" className="text-[10px] text-primary hover:underline">
-            View all
-          </a>
+            {translateInterface("m30a64216eaea")}</a>
         )}
       </div>
 

@@ -1,3 +1,4 @@
+import { getLocale, getTranslations as getInterfaceTranslations } from "next-intl/server";
 import { ArrowRight, Languages } from "lucide-react";
 import { getLanguageName } from "@/lib/translate/languages";
 
@@ -13,10 +14,13 @@ interface TranslationCardPageProps {
 }
 
 export default async function TranslationPreviewCardPage({ searchParams }: TranslationCardPageProps) {
+  const locale = await getLocale();
+  const translateInterface = await getInterfaceTranslations("interface");
+
   const params = await searchParams;
   const sourceLang = params.sourceLang || params.source || "auto";
   const targetLang = params.targetLang || params.target || "en";
-  const sourceText = params.text || "Translation preview";
+  const sourceText = params.text || translateInterface("m775b599621fc");
   const translatedText = params.translated || "";
 
   return (
@@ -26,17 +30,17 @@ export default async function TranslationPreviewCardPage({ searchParams }: Trans
           <Languages className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold">Translation</h2>
+          <h2 className="text-sm font-semibold">{translateInterface("m6fbd766b1a71")}</h2>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span>{getLanguageName(sourceLang)}</span>
+            <span>{getLanguageName(sourceLang, locale, translateInterface("m89ebfb7a88ca"))}</span>
             <ArrowRight className="h-3 w-3" />
-            <span>{getLanguageName(targetLang)}</span>
+            <span>{getLanguageName(targetLang, locale, translateInterface("m89ebfb7a88ca"))}</span>
           </div>
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <TextBlock label="Original" value={sourceText} />
-        <TextBlock label="Translated" value={translatedText || "Open Translate to create this translation."} muted={!translatedText} />
+        <TextBlock label={translateInterface("m88d759ea02ce")} value={sourceText} />
+        <TextBlock label={translateInterface("mabbc13c13e35")} value={translatedText || translateInterface("m3199baf381bb")} muted={!translatedText} />
       </div>
     </div>
   );

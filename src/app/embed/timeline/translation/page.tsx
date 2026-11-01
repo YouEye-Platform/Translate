@@ -1,3 +1,4 @@
+import { getTranslations as getInterfaceTranslations } from "next-intl/server";
 /**
  * Translate Timeline Embed — Translation Card
  *
@@ -27,6 +28,8 @@ interface PageProps {
 }
 
 export default async function TimelineTranslationPage({ searchParams }: PageProps) {
+  const translateInterface = await getInterfaceTranslations("interface");
+
   const params = await searchParams;
   const { src = "auto", tgt = "en", chars = "0", preview = "" } = params;
 
@@ -45,9 +48,9 @@ export default async function TimelineTranslationPage({ searchParams }: PageProp
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 mb-1">
             <Languages className="h-3.5 w-3.5 text-violet-500" />
-            <span className="text-[11px] font-medium text-violet-500">Translation</span>
+            <span className="text-[11px] font-medium text-violet-500">{translateInterface("m6fbd766b1a71")}</span>
             <span className="text-[10px] text-muted-foreground">
-              {charCount} chars
+              {translateInterface("m426699d5a8c0", { count: charCount })}
             </span>
           </div>
 

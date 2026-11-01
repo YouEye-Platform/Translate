@@ -1,7 +1,10 @@
 "use client";
 
+import { useLocale, useTranslations as useInterfaceTranslations } from "next-intl";
+
 import { useState, useEffect, useCallback } from "react";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, X, BookOpen } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageSelector } from "./language-selector";
@@ -10,11 +13,14 @@ import { TranslationResult } from "./translation-result";
 import { getSourceLanguages, getTargetLanguages, getLanguageName } from "@/lib/translate/languages";
 
 export function TranslateForm() {
+  const translateInterface = useInterfaceTranslations("interface");
+  const interfaceLocale = useLocale();
   const [sourceText, setSourceText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [sourceLang, setSourceLang] = useState("auto");
   const [targetLang, setTargetLang] = useState("es");
   const [loading, setLoading] = useState(false);
+  const [translationFailed, setTranslationFailed] = useState(false);
   const [lastId, setLastId] = useState<string | undefined>();
   const [isSaved, setIsSaved] = useState(false);
   const [detectedLang, setDetectedLang] = useState<string | undefined>();
@@ -36,8 +42,9 @@ export function TranslateForm() {
   }, []);
 
   const handleTranslate = useCallback(async () => {
-    if (!sourceText.trim() || !targetLang) return;
+    if (loading || !sourceText.trim() || !targetLang) return;
     setLoading(true);
+    setTranslationFailed(false);
     setTranslatedText("");
     setLastId(undefined);
     setIsSaved(false);
@@ -49,20 +56,32 @@ export function TranslateForm() {
         body: JSON.stringify({ text: sourceText, sourceLang, targetLang }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Translation failed");
+      if (!res.ok) throw new Error("Translation request failed");
       setTranslatedText(data.translatedText ?? "");
       if (data.detectedLanguage) setDetectedLang(data.detectedLanguage);
       if (data.id) {
         setLastId(data.id);
         setIsSaved(false);
       }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setTranslatedText(`Error: ${msg}`);
+    } catch {
+      setTranslationFailed(true);
     } finally {
       setLoading(false);
     }
-  }, [sourceText, sourceLang, targetLang]);
+  }, [sourceText, sourceLang, targetLang, loading]);
+
+  const handleSwap = useCallback(() => {
+    if (loading || sourceLang === "auto") return;
+    setTranslationFailed(false);
+    const prevSource = sourceLang;
+    const prevTarget = targetLang;
+    setSourceLang(prevTarget);
+    setTargetLang(prevSource);
+    if (translatedText) {
+      setSourceText(translatedText);
+      setTranslatedText(sourceText);
+    }
+  }, [loading, sourceLang, targetLang, translatedText, sourceText]);
 
   // Keyboard shortcut: Ctrl+Enter to translate
   useEffect(() => {
@@ -79,19 +98,7 @@ export function TranslateForm() {
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [handleTranslate]);
-
-  const handleSwap = () => {
-    if (sourceLang === "auto") return;
-    const prevSource = sourceLang;
-    const prevTarget = targetLang;
-    setSourceLang(prevTarget);
-    setTargetLang(prevSource);
-    if (translatedText) {
-      setSourceText(translatedText);
-      setTranslatedText(sourceText);
-    }
-  };
+  }, [handleTranslate, handleSwap]);
 
   const handleToggleSave = async () => {
     if (!lastId) return;
@@ -102,7 +109,7 @@ export function TranslateForm() {
         setIsSaved(data.is_saved);
       }
     } catch {
-      // Non-critical
+      // Saving is optional; the translated text remains available.
     }
   };
 
@@ -111,88 +118,52 @@ export function TranslateForm() {
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col gap-5">
-        {/* Language selectors row */}
-        <div className="flex items-center gap-3 justify-center">
-          <div className="flex-1 max-w-xs">
-            <LanguageSelector
-              value={sourceLang}
-              onChange={(v) => { setSourceLang(v); setDetectedLang(undefined); }}
-              languages={sourceLanguages}
-              placeholder="Detect language"
-              variant="source"
-            />
-            {sourceLang === "auto" && detectedLang && (
-              <p className="text-xs text-muted-foreground mt-1 ml-1">
-                Detected: <span className="font-medium text-foreground">{getLanguageName(detectedLang)}</span>
-              </p>
-            )}
+      <div className="translation-workspace">
+        <h1 className="sr-only">{translateInterface("uxTranslateText")}</h1>
+        <div className="translation-language-bar">
+          <div className="min-w-0">
+            <LanguageSelector value={sourceLang} onChange={(v) => { setSourceLang(v); setDetectedLang(undefined); }} languages={sourceLanguages} placeholder={translateInterface("detectLanguage")} variant="source" disabled={loading} />
           </div>
-
-          <SwapButton onClick={handleSwap} disabled={sourceLang === "auto"} />
-
-          <div className="flex-1 max-w-xs">
-            <LanguageSelector
-              value={targetLang}
-              onChange={setTargetLang}
-              languages={targetLanguages}
-              placeholder="Target language"
-              variant="target"
-            />
+          <SwapButton onClick={handleSwap} disabled={loading || sourceLang === "auto"} />
+          <div className="min-w-0">
+            <LanguageSelector value={targetLang} onChange={setTargetLang} languages={targetLanguages} placeholder={translateInterface("mea252b75a5db")} variant="target" disabled={loading} />
           </div>
         </div>
 
-        {/* Two-pane translate area */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Source pane — card style */}
-          <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-sm min-h-[220px]">
+        <div className="translation-panels">
+          <section className="translation-source" aria-label={translateInterface("uxSource")}>
             <textarea
               value={sourceText}
               onChange={(e) => setSourceText(e.target.value)}
-              placeholder="Type or paste text here…"
-              className="flex-1 p-4 text-base bg-transparent resize-none focus:outline-none placeholder:text-muted-foreground/50 min-h-[180px]"
+              placeholder={translateInterface("uxEnterText")}
+              className="translation-input"
               maxLength={charMax}
-              aria-label="Source text"
+              aria-label={translateInterface("ma155f1ea2dfd")}
+              disabled={loading}
+              dir="auto"
             />
-            <div className="flex items-center justify-between px-4 py-2 border-t border-border/30">
-              <span className={`text-xs ${charCount > charMax * 0.9 ? "text-orange-500 font-medium" : "text-muted-foreground/60"}`}>
-                {charCount.toLocaleString()} / {charMax.toLocaleString()}
-              </span>
-            </div>
-          </div>
-
-          {/* Result pane */}
-          <TranslationResult
-            translatedText={translatedText}
-            translationId={lastId}
-            isSaved={isSaved}
-            onToggleSave={handleToggleSave}
-            loading={loading}
-          />
+            <footer>
+              <Button variant="ghost" size="sm" disabled={loading || !sourceText} onClick={() => { setSourceText(""); setTranslatedText(""); setTranslationFailed(false); setLastId(undefined); setDetectedLang(undefined); setIsSaved(false); }}>
+                <X className="h-4 w-4" /> {translateInterface("uxClear")}
+              </Button>
+              <Button onClick={handleTranslate} disabled={loading || !sourceText.trim()} className="translation-submit">
+                {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {translateInterface("me72799b80982")}</> : <>{translateInterface("m8fe147696fbf")} <ArrowRight className="h-4 w-4" /></>}
+              </Button>
+            </footer>
+          </section>
+          <TranslationResult translatedText={translatedText} translationId={lastId} isSaved={isSaved} onToggleSave={handleToggleSave} loading={loading} error={translationFailed ? translateInterface("mb9725da1e57f") : undefined} language={getLanguageName(targetLang, interfaceLocale)} />
         </div>
 
-        {/* Translate button — centered, gradient */}
-        <div className="flex justify-center">
-          <Button
-            onClick={handleTranslate}
-            disabled={loading || !sourceText.trim()}
-            className="rounded-full px-8 h-11 text-sm font-semibold bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md hover:shadow-lg hover:from-violet-600 hover:to-purple-700 border-0 transition-all disabled:opacity-50"
-            size="lg"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Translating…
-              </>
-            ) : (
-              <>
-                Translate
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </>
-            )}
-          </Button>
+        <div className="translation-note">
+          <span>{sourceLang === "auto" && detectedLang ? translateInterface("uxDetectedLanguage", { language: getLanguageName(detectedLang, interfaceLocale) }) : translateInterface("uxTranslateShortcut")}</span>
+          <span className={charCount > charMax * 0.9 ? "text-foreground font-medium" : ""}>{charCount.toLocaleString(interfaceLocale)} / {charMax.toLocaleString(interfaceLocale)}</span>
         </div>
-
+        <section className="translation-collection">
+          <BookOpen className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+          <h2>{translateInterface("uxCollectionTitle")}</h2>
+          <p>{translateInterface("uxCollectionDescription")}</p>
+          <Link href="/saved" className="inline-flex items-center gap-2 text-sm font-medium hover:underline underline-offset-4" prefetch={false}>{translateInterface("uxOpenSaved")} <ArrowRight className="h-4 w-4" /></Link>
+        </section>
       </div>
     </TooltipProvider>
   );

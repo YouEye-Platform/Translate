@@ -1,3 +1,4 @@
+import {getLocale, getTranslations} from "next-intl/server";
 import { getSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { getMany } from "@/lib/db/client";
@@ -5,6 +6,9 @@ import { runMigrations } from "@/lib/db/migrate";
 import { getLanguageName } from "@/lib/translate/languages";
 
 export async function GET(request: Request) {
+  const locale = await getLocale();
+  const t = await getTranslations("interface");
+  const languageName = (code: string) => getLanguageName(code, locale, t("m89ebfb7a88ca"));
   const session = await getSession("ye-translate");
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   await runMigrations();
@@ -21,14 +25,14 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     widget_type: "list",
-    title: "Recent Translations",
+    title: t("m9fd89cd6fa92"),
     items: translations.map((t) => ({
       title: `${String(t.source_text).slice(0, 30)} → ${String(t.translated_text).slice(0, 30)}`,
-      subtitle: `${getLanguageName(String(t.source_lang))} → ${getLanguageName(String(t.target_lang))}`,
+      subtitle: `${languageName(String(t.source_lang))} → ${languageName(String(t.target_lang))}`,
       timestamp: t.created_at,
       action: { type: "link", url: externalUrl },
     })),
-    empty_message: "No translations yet. Try translating something!",
-    action: { label: "Open Translate", url: externalUrl },
+    empty_message: t("m7ba6977e62fb"),
+    action: { label: t("md92a46e5235b"), url: externalUrl },
   });
 }

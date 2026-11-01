@@ -48,6 +48,11 @@ export function getSourceLanguages(): Language[] {
 }
 
 /** Get language name by code */
-export function getLanguageName(code: string): string {
+export function getLanguageName(code: string, locale = "en", autoLabel = "Auto-detect"): string {
+  if (code === "auto") return autoLabel;
+  try {
+    const name = new Intl.DisplayNames([locale], {type: "language", fallback: "none"}).of(code);
+    if (name) return name;
+  } catch { /* Unknown identifiers keep their stable fallback. */ }
   return LANGUAGES.find((l) => l.code === code)?.name ?? code.toUpperCase();
 }

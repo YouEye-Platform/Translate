@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations as useInterfaceTranslations } from "next-intl";
 import { Languages } from "lucide-react";
 
 interface PhraseOfDayWidgetProps {
@@ -11,11 +12,13 @@ interface PhraseOfDayWidgetProps {
 }
 
 export function PhraseOfDayWidget({ text, translation, langName, targetLangName, categories }: PhraseOfDayWidgetProps) {
+  const translateInterface = useInterfaceTranslations("interface");
+
   return (
     <div className="h-full p-3 flex flex-col">
       <div className="flex items-center gap-1.5 mb-3">
         <Languages className="h-3.5 w-3.5 text-violet-500" />
-        <span className="text-xs font-semibold text-foreground">Phrase of the Day</span>
+        <span className="text-xs font-semibold text-foreground">{translateInterface("m3ccd05315c4d")}</span>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center text-center px-2">

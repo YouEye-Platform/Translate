@@ -1,3 +1,5 @@
+import {getLocale} from "next-intl/server";
+import {getTranslations as getInterfaceTranslations} from "next-intl/server";
 import { getSession } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getOne } from "@/lib/db/client";
@@ -5,6 +7,9 @@ import { runMigrations } from "@/lib/db/migrate";
 import { getLanguageName } from "@/lib/translate/languages";
 
 export async function GET(request: NextRequest) {
+  const translateInterface = await getInterfaceTranslations("interface");
+  const locale = await getLocale();
+  const languageName = (code: string) => { try { return new Intl.DisplayNames([locale], {type:"language"}).of(code) || getLanguageName(code); } catch { return getLanguageName(code); } };
   const url = new URL(request.url);
   const query = url.searchParams.get("query") ?? "";
   const session = await getSession("ye-translate");
@@ -13,7 +18,7 @@ export async function GET(request: NextRequest) {
   const userId = session.userId;
 
   if (!userId) {
-    return NextResponse.json({ type: "translation-preview", title: "Translate", body: "Sign in to see your translations." });
+    return NextResponse.json({ type: "translation-preview", title: "Translate", body: translateInterface("m5f95fe0a661d") });
   }
 
   const externalUrl = process.env.TRANSLATE_EXTERNAL_URL || "";
@@ -28,9 +33,9 @@ export async function GET(request: NextRequest) {
     if (match) {
       return NextResponse.json({
         type: "translation-preview",
-        title: `${getLanguageName(String(match.source_lang))} → ${getLanguageName(String(match.target_lang))}`,
+        title: `${languageName(String(match.source_lang))} → ${languageName(String(match.target_lang))}`,
         body: `"${String(match.source_text).slice(0, 80)}" → "${String(match.translated_text).slice(0, 80)}"`,
-        action: { label: "Open Translate", url: externalUrl },
+        action: { label: translateInterface("md92a46e5235b"), url: externalUrl },
       });
     }
   }
@@ -44,16 +49,16 @@ export async function GET(request: NextRequest) {
   if (recent) {
     return NextResponse.json({
       type: "translation-preview",
-      title: `${getLanguageName(String(recent.source_lang))} → ${getLanguageName(String(recent.target_lang))}`,
+      title: `${languageName(String(recent.source_lang))} → ${languageName(String(recent.target_lang))}`,
       body: `"${String(recent.source_text).slice(0, 80)}" → "${String(recent.translated_text).slice(0, 80)}"`,
-      action: { label: "Open Translate", url: externalUrl },
+      action: { label: translateInterface("md92a46e5235b"), url: externalUrl },
     });
   }
 
   return NextResponse.json({
     type: "translation-preview",
     title: "Translate",
-    body: "No translations yet. Start translating!",
-    action: { label: "Open Translate", url: externalUrl },
+    body: translateInterface("m60f4809485ae"),
+    action: { label: translateInterface("md92a46e5235b"), url: externalUrl },
   });
 }

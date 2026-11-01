@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations as useInterfaceTranslations } from "next-intl";
+
 import { useState } from "react";
 import { Copy, Star, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +13,8 @@ interface TranslationResultProps {
   isSaved?: boolean;
   onToggleSave?: () => void;
   loading?: boolean;
+  error?: string;
+  language: string;
 }
 
 export function TranslationResult({
@@ -19,7 +23,10 @@ export function TranslationResult({
   isSaved,
   onToggleSave,
   loading,
+  error,
+  language,
 }: TranslationResultProps) {
+  const translateInterface = useInterfaceTranslations("interface");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -30,54 +37,30 @@ export function TranslationResult({
   };
 
   return (
-    <div className="relative flex flex-col rounded-2xl border border-border/60 bg-muted/20 shadow-sm min-h-[220px]">
-      {/* Action buttons — top right */}
-      <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
-        {translationId && onToggleSave && (
+    <section className="translation-result" aria-label={translateInterface("m6fbd766b1a71")} aria-busy={loading}>
+      <div className="translation-output" role="status" aria-live="polite" dir="auto">
+        {loading ? <p className="text-muted-foreground animate-pulse">{translateInterface("me72799b80982")}</p> : error ? (
+          <div role="alert" className="translation-error"><p>{translateInterface("uxTranslationError")}</p><p className="text-sm mt-2">{error}</p></div>
+        ) : translatedText ? <p className="whitespace-pre-wrap break-words">{translatedText}</p> : <p className="text-muted-foreground">{translateInterface("mda1d598bc99c")}</p>}
+      </div>
+      <footer>
+        <span>{language}</span>
+        <div className="flex items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onToggleSave}
-                aria-label={isSaved ? "Unsave translation" : "Save translation"}
-                className="h-8 w-8 rounded-full"
-              >
-                <Star
-                  className={`h-4 w-4 transition-colors ${isSaved ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
-                />
+              <Button variant="ghost" size="icon" onClick={handleCopy} disabled={!translatedText || loading || !!error} aria-label={copied ? translateInterface("uxTranslationCopied") : translateInterface("me61283caa8b6")} className="h-9 w-9 rounded-lg">
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>{isSaved ? "Unsave" : "Save"}</TooltipContent>
+            <TooltipContent>{copied ? translateInterface("mea61bc15688d") : translateInterface("me21f935f11d7")}</TooltipContent>
           </Tooltip>
-        )}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopy}
-              disabled={!translatedText}
-              aria-label="Copy translation"
-              className="h-8 w-8 rounded-full"
-            >
-              {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
+          {translationId && onToggleSave && (
+            <Button variant="ghost" size="sm" onClick={onToggleSave} aria-pressed={!!isSaved} aria-label={isSaved ? translateInterface("m61e058a17789") : translateInterface("m1d9eb7b9db2c")}>
+              <Star className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />{isSaved ? translateInterface("mb5c120b316c2") : translateInterface("m1509f561f241")}
             </Button>
-          </TooltipTrigger>
-          <TooltipContent>{copied ? "Copied!" : "Copy"}</TooltipContent>
-        </Tooltip>
-      </div>
-
-      {/* Translation text */}
-      <div className="flex-1 p-4 pr-20">
-        {loading ? (
-          <p className="text-muted-foreground animate-pulse text-base">Translating…</p>
-        ) : translatedText ? (
-          <p className="text-base whitespace-pre-wrap break-words">{translatedText}</p>
-        ) : (
-          <p className="text-muted-foreground/60 text-base">Translation will appear here.</p>
-        )}
-      </div>
-    </div>
+          )}
+        </div>
+      </footer>
+    </section>
   );
 }

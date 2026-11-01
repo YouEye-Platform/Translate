@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations as useInterfaceTranslations } from "next-intl";
 import Link from "next/link";
 
 import { useState, useEffect } from "react";
@@ -16,6 +17,8 @@ interface Translation {
 }
 
 export default function SavedPage() {
+  const translateInterface = useInterfaceTranslations("interface");
+
   const [translations, setTranslations] = useState<Translation[]>([]);
 
   useEffect(() => {
@@ -41,10 +44,10 @@ export default function SavedPage() {
     <div className="container mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Saved Translations</h1>
-          <p className="text-muted-foreground text-sm mt-1">{translations.length} saved</p>
+          <h1 className="text-2xl font-bold">{translateInterface("mc51adea30ed1")}</h1>
+          <p className="text-muted-foreground text-sm mt-1">{translateInterface("mbf566fa22928", { count: translations.length })}</p>
         </div>
-        <Link href="/" className="text-sm text-primary hover:underline" prefetch={false}>← Translate</Link>
+        <Link href="/" className="text-sm text-primary hover:underline" prefetch={false}>{translateInterface("mc8977b979163")}</Link>
       </div>
       <SavedList translations={translations} onUnsave={handleUnsave} />
     </div>

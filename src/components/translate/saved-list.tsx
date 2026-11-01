@@ -1,5 +1,8 @@
 "use client";
+import { useLocale as useInterfaceLocale } from "next-intl";
 
+
+import { useTranslations as useInterfaceTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,12 +23,16 @@ interface SavedListProps {
 }
 
 export function SavedList({ translations, onUnsave }: SavedListProps) {
+  const interfaceLocale = useInterfaceLocale();
+
+  const translateInterface = useInterfaceTranslations("interface");
+
   if (translations.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         <Star className="h-12 w-12 mx-auto mb-3 opacity-20" />
-        <p className="text-lg">No saved translations</p>
-        <p className="text-sm mt-1">Star translations to save them here</p>
+        <p className="text-lg">{translateInterface("mb8d878957f04")}</p>
+        <p className="text-sm mt-1">{translateInterface("m7a22b9fea181")}</p>
       </div>
     );
   }
@@ -43,7 +50,7 @@ export function SavedList({ translations, onUnsave }: SavedListProps) {
               <span className="text-muted-foreground text-xs">→</span>
               <Badge variant="outline" className="text-xs">{t.target_lang}</Badge>
               <span className="text-xs text-muted-foreground ml-auto">
-                {new Date(t.created_at).toLocaleDateString()}
+                {new Date(t.created_at).toLocaleDateString(interfaceLocale)}
               </span>
             </div>
             <p className="text-sm font-medium">{t.source_text.slice(0, 200)}</p>
@@ -54,7 +61,7 @@ export function SavedList({ translations, onUnsave }: SavedListProps) {
             size="icon"
             className="h-8 w-8 ml-3 shrink-0"
             onClick={() => onUnsave(t.id)}
-            aria-label="Unsave"
+            aria-label={translateInterface("m51883bd8df17")}
           >
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
           </Button>

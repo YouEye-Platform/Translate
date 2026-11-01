@@ -1,3 +1,4 @@
+import { getActivityTranslator } from "@/i18n/activity";
 /**
  * Translate Timeline Event Emitters
  *
@@ -51,19 +52,24 @@ export async function emitTranslation(
   sourceLang: string,
   targetLang: string,
   charCount: number,
-  preview: string
+  preview: string,
+  originalTimestamp?: string
 ): Promise<void> {
-  const srcName = getLanguageName(sourceLang);
-  const tgtName = getLanguageName(targetLang);
+  const timestamp = originalTimestamp ?? new Date().toISOString();
+  const { t, locale } = await getActivityTranslator(userId);
+  const languageNames = new Intl.DisplayNames([locale], {type: "language"});
+  const srcName = sourceLang === "auto" ? t("md65b27150eda") : languageNames.of(sourceLang) || getLanguageName(sourceLang);
+  const tgtName = languageNames.of(targetLang) || getLanguageName(targetLang);
 
   await emitIfNotDebounced(
     userId,
     `translate:${sourceLang}:${targetLang}:${preview.slice(0, 30)}`,
     "history",
     {
+      timestamp,
       app_id: "translate",
       entry_type: "translate-text",
-      title: `Translated ${charCount} chars ${srcName} → ${tgtName}`,
+      title: t("m8885f47f9544", {count: charCount, source: srcName, target: tgtName}),
       embed_path: `/embed/timeline/translation?src=${sourceLang}&tgt=${targetLang}&chars=${charCount}&preview=${encodeURIComponent(preview.slice(0, 100))}`,
       tags: { source_lang: sourceLang, target_lang: targetLang },
       data: {

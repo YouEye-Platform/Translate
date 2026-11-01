@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations as useInterfaceTranslations } from "next-intl";
 import { useState, useCallback } from "react";
 import { ArrowRight, Loader2, ArrowLeftRight } from "lucide-react";
 
@@ -16,6 +17,8 @@ export function QuickTranslateWidget({
   sourceLangName,
   targetLangName,
 }: QuickTranslateWidgetProps) {
+  const translateInterface = useInterfaceTranslations("interface");
+
   const [text, setText] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,14 +41,14 @@ export function QuickTranslateWidget({
         const data = await res.json();
         setResult(data.translatedText ?? "");
       } else {
-        setResult("Translation failed.");
+        setResult(translateInterface("m453dd4fc3187"));
       }
     } catch {
-      setResult("Translation failed.");
+      setResult(translateInterface("m453dd4fc3187"));
     } finally {
       setLoading(false);
     }
-  }, [text, loading, defaultSourceLang, defaultTargetLang]);
+  }, [text, loading, defaultSourceLang, defaultTargetLang, translateInterface]);
 
   return (
     <div className="h-full p-3 flex flex-col gap-2">
@@ -73,16 +76,16 @@ export function QuickTranslateWidget({
               translate();
             }
           }}
-          placeholder="Type to translate…"
+          placeholder={translateInterface("mc8e5e171d20e")}
           className="w-full h-full resize-none rounded-lg border border-border/40 bg-background px-2.5 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-violet-400/40"
         />
         <div className="w-full h-full overflow-auto rounded-lg bg-muted/30 border border-border/20 px-2.5 py-2 text-sm">
           {loading ? (
-            <span className="text-muted-foreground animate-pulse">Translating…</span>
+            <span className="text-muted-foreground animate-pulse">{translateInterface("me72799b80982")}</span>
           ) : result ? (
             <span>{result}</span>
           ) : (
-            <span className="text-muted-foreground/40">Translation here…</span>
+            <span className="text-muted-foreground/40">{translateInterface("m8a544cf482ae")}</span>
           )}
         </div>
       </div>
@@ -97,8 +100,7 @@ export function QuickTranslateWidget({
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
           <>
-            Translate
-            <ArrowRight className="h-3 w-3" />
+            {translateInterface("m8fe147696fbf")}<ArrowRight className="h-3 w-3" />
           </>
         )}
       </button>
