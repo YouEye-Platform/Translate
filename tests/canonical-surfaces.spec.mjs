@@ -32,10 +32,10 @@ test("Translate publishes canonical surfaces in runtime and install manifests", 
   assert.doesNotMatch(route, /refreshInterval: 0/);
 
   assert.match(yaml, versionPattern());
-  assert.match(yaml, /surfaceSchemaVersion: 1/);
+  assert.match(yaml, /^schema: youeye\.app\.v1$/m);
   assert.match(yaml, /- id: quick-translate/);
   assert.match(yaml, /kind: settings-panel/);
   assert.match(yaml, /kind: info-card/);
-  assert.match(yaml, /- translate-text/);
+  assert.match(yaml, /triggers: \[[^\]]*\btranslate-text\b/);
   assert.doesNotMatch(yaml, /refreshInterval: 0/);
 });
