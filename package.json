@@ -1,6 +1,6 @@
 {
   "name": "ye-app-translate",
-  "version": "0.6.0",
+  "version": "0.0.0",
   "private": true,
   "repository": "https://github.com/YouEye-Platform/YE-App-Translate",
   "packageManager": "pnpm@10.6.2",
@@ -10,8 +10,6 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test tests/*.spec.mjs",
-    "release:prepare": "node scripts/prepare-release.mjs",
-    "release:check": "node scripts/prepare-release.mjs --check",
     "typecheck": "tsc --noEmit --pretty false",
     "i18n:check": "node scripts/check-i18n-source.mjs && node scripts/check-i18n.mjs"
   },
