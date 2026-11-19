@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { BUILD_VERSION } from "@/lib/build-version";
+import { APP_VERSION } from "@/lib/app-version";
 
 export async function GET() {
   return NextResponse.json({
     id: "ye-translate",
     name: "Translate",
-    version: BUILD_VERSION,
+    version: APP_VERSION,
     description: "Privacy-friendly translation with saved translations",
     icon: "Languages",
     permissions: ["timeline:write", "widgets:register"],
