@@ -6,7 +6,7 @@ export async function GET() {
     id: "ye-translate",
     name: "Translate",
     version: APP_VERSION,
-    description: "Privacy-friendly translation with saved translations",
+    description: "Translation with saved translations, powered by MyMemory",
     icon: "Languages",
     permissions: ["timeline:write", "widgets:register"],
   surfaceSchemaVersion: 1,

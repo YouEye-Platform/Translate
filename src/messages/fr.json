@@ -1,7 +1,7 @@
 {
   "translate": {
     "title": "Traduire",
-    "subtitle": "Traduction respectueuse de la vie privée avec MyMemory",
+    "subtitle": "Traduction avec MyMemory",
     "placeholder": "Saisissez le texte à traduire…",
     "result": "La traduction apparaîtra ici…",
     "button": "Traduire",
@@ -95,7 +95,7 @@
     "m60acc53f13a5": "Sombre",
     "m0286249762f7": "Automatique",
     "mda645334193e": "Paramètres de l’application",
-    "mf787b5f66b77": "Traduction respectueuse de la vie privée avec MyMemory",
+    "mf787b5f66b77": "Traduction avec MyMemory",
     "m314362d535e4": "{app} nécessite une autorisation pour terminer la configuration",
     "mc68c9c19a284": "Connectez-vous pour utiliser les widgets de traduction.",
     "mec29e7f61294": "Widget inconnu.",

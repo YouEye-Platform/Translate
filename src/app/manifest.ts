@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: `${appName} — ${platformName}`,
     short_name: appName,
-    description: "Privacy-friendly translation",
+    description: "Translation powered by MyMemory",
     start_url: "/",
     display: "standalone",
     background_color: "#0a0a0f",

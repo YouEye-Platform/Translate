@@ -1,7 +1,7 @@
 {
   "translate": {
     "title": "Translate",
-    "subtitle": "Privacy-friendly translation powered by MyMemory",
+    "subtitle": "Translation powered by MyMemory",
     "placeholder": "Enter text to translate…",
     "result": "Translation will appear here…",
     "button": "Translate",
@@ -95,7 +95,7 @@
     "m60acc53f13a5": "Dark",
     "m0286249762f7": "Auto",
     "mda645334193e": "App Settings",
-    "mf787b5f66b77": "Privacy-friendly translation powered by MyMemory",
+    "mf787b5f66b77": "Translation powered by MyMemory",
     "m314362d535e4": "{app} needs permission to finish setup",
     "mc68c9c19a284": "Sign in to use Translate widgets.",
     "mec29e7f61294": "Unknown widget.",

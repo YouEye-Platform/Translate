@@ -3,11 +3,11 @@ id: translate
 version: 0.0.0
 name: Translate
 listing:
-  description: Privacy-friendly translation with saved translations and language preferences. Powered by MyMemory.
+  description: Translation with saved translations and language preferences. Powered by MyMemory.
   long_description: |
-    Translate is a privacy-friendly translation tool with history and saved translations.
-    Powered by MyMemory — works out of the box with no API key. Supports language preferences,
-    translation history, and favorites.
+    Translate is a translation tool with history and saved translations.
+    Powered by MyMemory — works out of the box with no API key. The text you translate is sent to
+    MyMemory. Supports language preferences, translation history, and favorites.
   category: productivity
   tags: [translation, language, productivity, native]
   icon: languages
@@ -40,11 +40,6 @@ sso:
   env:
     IDENTITY_CLIENT_ID: ${sso.client_id}
     IDENTITY_CLIENT_SECRET: ${sso.client_secret}
-connects:
-  - app: libretranslate
-    name: LibreTranslate
-    description: Self-hosted translation engine
-    port: 5000
 data_ownership: {per_user: identity_uuid}
 capabilities: {widgets: true, settings_panel: true}
 surfaces:
