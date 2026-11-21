@@ -1,7 +1,7 @@
 {
   "translate": {
     "title": "Traducir",
-    "subtitle": "Traducción con respeto a la privacidad mediante MyMemory",
+    "subtitle": "Traducción mediante MyMemory",
     "placeholder": "Escribe el texto que quieres traducir…",
     "result": "La traducción aparecerá aquí…",
     "button": "Traducir",
@@ -95,7 +95,7 @@
     "m60acc53f13a5": "Oscuro",
     "m0286249762f7": "Automático",
     "mda645334193e": "Ajustes de la aplicación",
-    "mf787b5f66b77": "Traducción respetuosa con la privacidad mediante MyMemory",
+    "mf787b5f66b77": "Traducción mediante MyMemory",
     "m314362d535e4": "{app} necesita permiso para completar la configuración",
     "mc68c9c19a284": "Inicia sesión para usar los widgets de traducción.",
     "mec29e7f61294": "Widget desconocido.",

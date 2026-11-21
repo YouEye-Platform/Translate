@@ -1,7 +1,7 @@
 {
   "translate": {
     "title": "Übersetzen",
-    "subtitle": "Datenschutzfreundliche Übersetzung mit MyMemory",
+    "subtitle": "Übersetzung mit MyMemory",
     "placeholder": "Text zum Übersetzen eingeben…",
     "result": "Die Übersetzung erscheint hier…",
     "button": "Übersetzen",
@@ -95,7 +95,7 @@
     "m60acc53f13a5": "Dunkel",
     "m0286249762f7": "Automatisch",
     "mda645334193e": "App-Einstellungen",
-    "mf787b5f66b77": "Datenschutzfreundliche Übersetzung mit MyMemory",
+    "mf787b5f66b77": "Übersetzung mit MyMemory",
     "m314362d535e4": "{app} benötigt eine Berechtigung, um die Einrichtung abzuschließen",
     "mc68c9c19a284": "Melde dich an, um Übersetzungswidgets zu verwenden.",
     "mec29e7f61294": "Unbekanntes Widget.",
